@@ -14,7 +14,7 @@
 Como fazer para testar o código:
 
 - Copiar todo o conteúdo do arquivo .js e colar no console do navegador
-- 
+
 ## 🤝 Autor
 
 
