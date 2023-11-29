@@ -25,7 +25,8 @@ function mediaNumerosImpares(numbers) {
     for (numbers of numerosImpares) {
         somaNumerosImpares += numbers
     }
-    return somaNumerosImpares28
+    let mediaFinal = somaNumerosImpares / numerosImpares.length
+    return mediaFinal
 }
 
 console.log(mediaNumerosImpares([0,1,4,5,6,7,8,12,15,17,20]))
