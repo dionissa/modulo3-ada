@@ -1,27 +1,25 @@
 /* Atividade 1:                                    */
 
 class Pessoa {
-    constructor(nome, idade, cidade) {
+    constructor (nome, idade, cidade){
         this.nome = nome;
         this.idade = idade;
-        this.cidade = cidade;
-    }
-    calcularIdadeBissextos(ano) {
-        // Verificar o ano de nascimento da pessoa
-        const anoNascimento = new Date().getFullYear() - this.idade;
-        // Iniciar uma variável onde vai adicionar os anos bissextos desde o nascimento até a idade tual da pessoa
-        let anosBissextos = 0;
+        this.cidade = cidade;}
 
-        // Criar um loop que vai verificar os anos bissextos contidos nesse período seguindo a lógica:
-        // Se for divisível por 4 e não for divisível por 100, adiciona 1 exceto se ele for divisível por 400, que ai adiciona 1 também.
-        for (let i = anoNascimento; i <= ano; i++) {
-            if ((i % 4 === 0 && i % 100 !== 0) || (i % 400 === 0)) {
-                anosBissextos++;
+        calcularIdadeBissextos(ano) {
+            // Iniciar uma variável onde vai adicionar os anos bissextos desde o nascimento até a idade tual da pessoa
+            let anosBissextos = 0;
+            const anoAtual = new Date().getFullYear()
+            // Criar um loop que vai verificar os anos bissextos contidos nesse período seguindo a lógica:
+            // Se for divisível por 4 e não for divisível por 100, adiciona 1 exceto se ele for divisível por 400, que ai adiciona 1 também.
+            for (let i = ano; i <= anoAtual; i++) {
+                if ((i % 4 === 0 && i % 100 !== 0) || (i % 400 === 0)) {
+                    anosBissextos++;
+                }
             }
-        }
-        return this.idade + anosBissextos;
-}
-}
+            return anosBissextos;
+    }
+    }
 
 const pessoa1 = new Pessoa("Rodrigo", 28, "Jaraguá do Sul")
 const pessoa2 = new Pessoa("Lucas", 25, "Pelotas")
