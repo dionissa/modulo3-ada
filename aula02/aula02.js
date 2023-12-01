@@ -14,8 +14,8 @@ class Livro extends Autor {
         this.titulo = titulo;
         this.anoPublicacao = anoPublicacao;        
     }
-    detalhesDoLivro(titulo, anoPublicacao, nomeAutor, nacionalidade){
-        console.log(`O livro ${titulo} foi publicado no ano ${anoPublicacao}, escrito por ${nomeAutor} que é ${nacionalidade}`)
+    detalhesDoLivro(){
+        console.log(`O livro ${this.titulo} foi publicado no ano ${this.anoPublicacao}, escrito por ${this.nomeAutor} que é ${this.nacionalidade}`)
     }
 }
 
@@ -41,6 +41,12 @@ class Biblioteca {
             }
         }
     }
+    listarTodosOsLivros() {
+        console.log("Lista dos livros na biblioteca:")
+        for (let livro of this.livros) {
+            livro.detalhesDoLivro()
+        }
+    }
 }
 
 const livro1 = new Livro("O Silmarillion", 1977, "J. R. R. Tolkien", "sul-africano")
@@ -55,3 +61,4 @@ livro1.detalhesDoLivro(livro1.titulo, livro1.anoPublicacao, livro1.nomeAutor, li
 minhaBiblioteca.buscarPorAutor("Arnaldo")
 minhaBiblioteca.buscarPorAutor("J. R. R. Tolkien")
 minhaBiblioteca.buscarPorAutor()
+minhaBiblioteca.listarTodosOsLivros()
