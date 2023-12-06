@@ -28,42 +28,53 @@ class SistemaDeLogin {
     usuarios = [];
     cadastrarUsuario(nome, senha) {
         try {
-            if (nome.length < 4 && senha.length <= 5) {
-                throw new Error("Usuário precisa ter no mínimo 5 letras e senha no mínimo 5 caracteres")
-            }   else  {
-                this.usuarios.push({
+            if (nome.length < 4) {
+                throw new Error("Usuário precisa ter no mínimo 5 letras")
+            }
+            if (senha.length < 4) {
+                throw new Error("Senha precisa ter no mínimo 5 caracteres")
+            }
+
+                return this.usuarios.push({
                     nome: nome,
                     senha: senha,
                     logado: false
                 });
             }
-        }
      catch (error) {
         console.error("Erro ao Cadastrar Usuário:", error.message);
+            }
     }
-}
     realizarLogin(nome, senha) {
-        for (let users of this.usuarios) {
+        this.usuarios.forEach(users => {
             if (users.nome === nome && users.senha === senha) {
-            users.logado = true
+                users.logado = true;
+                console.log(`${users.nome} está logado no sistema.`)
             }
-        }            
-        };
+        });
+    }
     exibirMensagemPersonalizada() {
-        for (let users of this.usuarios) {
+        this.usuarios.forEach(users => {
             if (users.logado) {
-                console.log(`Bem vindo novamente ${users.nome}`)
+                console.log(`Bem vindo novamente ${users.nome}`);
+            } else {
+                return console.log(`${users.nome} não está logado.`)
             }
-        }
+        });
     }
     }
 
 
 const sistemaLogin = new SistemaDeLogin();
+
 sistemaLogin.cadastrarUsuario("Bilbo", "gollum")
 sistemaLogin.cadastrarUsuario("Frodo", "oAnel")
-sistemaLogin.cadastrarUsuario("nop", "123")
+sistemaLogin.cadastrarUsuario("Testando", "123")
+sistemaLogin.cadastrarUsuario("Err", "senha_ok")
 sistemaLogin.cadastrarUsuario("Legolas", "elvesFTW")
+
 const usuarioLogado = sistemaLogin.realizarLogin("Frodo", "oAnel")
-const usuarioLogado2 = sistemaLogin.realizarLogin("Legolas", "elvesFTW")
-sistemaLogin.exibirMensagemPersonalizada(usuarioLogado, usuarioLogado2)
+const usuarioLogado2 = sistemaLogin.realizarLogin("Cobra", "Password")
+const usuarioLogado3 = sistemaLogin.realizarLogin("Legolas", "elvesFTW")
+
+sistemaLogin.exibirMensagemPersonalizada(usuarioLogado, usuarioLogado2, usuarioLogado3)
