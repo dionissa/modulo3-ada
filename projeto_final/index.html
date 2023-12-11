@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dungeon Crawler</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="script.js" defer></script>
+</head>
+<body>
+    
+    <div class="main">
+        <div class="main-container">
+            <h1>Dungeon Crawler</h1>
+            <div id="game-container">
+                <div id="sword-container"></div>
+
+                <img id="main-character" src="img/character.png" alt="" class="main-character sword">
+            </div>
+            <div class="buttons-container">
+                <div class="movement-buttons">
+                    <div class="up"><button class="moviment-buttons move-up" onclick="moveCharacter('up')">↑</button></div>
+                    <div class="left-right">
+                        <button class="moviment-buttons move-left"  onclick="moveCharacter('left')">←</button>
+                        <button class="moviment-buttons" disabled>&nbsp;&nbsp;&nbsp;&nbsp;</button>
+                        <button class="moviment-buttons move right"  onclick="moveCharacter('right')">→</button>
+                    </div>
+                    <div class="down"><button class="moviment-buttons move-down"  onclick="moveCharacter('down')">↓</button></div>
+                </div>
+                <div class="control-buttons">
+                    <button id="attack-button">Atacar</button>
+                    <button onclick="Character.colectItem()">Vasculhar</button>
+                    <button onclick="openDoor()">Abrir</button>
+                    <button onclick="Character.showItens(mainPlayer)">Inventário</button>
+                </div>
+            </div>
+            <div class="pause-reset">
+                <button onclick="GameState.pauseGame()">Pausar</button>
+                <button onclick="GameState.quitGame()">Fechar</button>
+            </div>
+        </div>
+    </div>
+    <div id="spotify-player">
+        <div id="track-info">
+          <img src="img/header.jpg" alt="Album Cover">
+          <div>
+            <span>Powerfull Music</span>
+            <span>Dungeon Crawler</span>
+          </div>
+        </div>
+        <div id="controls">
+          <div id="play-pause">▶️</div>
+        </div>
+      </div>
+      
+    
+</body>
+</html>
