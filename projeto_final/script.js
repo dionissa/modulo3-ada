@@ -138,7 +138,6 @@ class GameState {
     }
 }
 
-// Matriz inicial com todos os quadrados livres
 const mapa = [
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
     [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
@@ -160,7 +159,6 @@ const mapa = [
 ];
 const tileSize = 32;
 
-// Exemplo de criação de um inimigo e adição ao mapa
 const mainPlayer = new Character("Dio", 0)
 const finalBoss = new BossEnemy("Tarrask", 5, "Ultimate Wish", 224, 96, "img/dragon.gif");
 const normalEnemy1 = new Enemy("Flameling", 4, "Iron Flail", 160, 256, "img/wizard.gif")
@@ -190,14 +188,11 @@ function canMoveTo(newLeft, newTop) {
         return false;
     }
 
-    // Check if the position is not a wall (1) or a closed door (4)
     return mapa[rowIndex][colIndex] === 0
 }
 
-// Adicione um ouvinte de evento de teclado para capturar as setas
 document.addEventListener("keydown", function(event) {
     if (event.key === 'ArrowUp' || event.key === 'ArrowDown' || event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
-        // Prevent the default scrolling behavior
         event.preventDefault();
       }
     switch (event.key) {
@@ -245,14 +240,9 @@ document.addEventListener("keydown", function(event) {
     }
   });
 
-// Função para adicionar um inimigo ao mapa
 function addEnemyToMap(enemy) {
-    // Verificar se a posição é válida no mapa
     if (canMoveTo(enemy.positionX, enemy.positionY)) {
-        // Adicionar o inimigo à matriz do mapa
-        mapa[enemy.positionY / tileSize][enemy.positionX / tileSize] = 2; // Use 2 para representar inimigos, por exemplo
-
-        // Criar elemento de imagem
+        mapa[enemy.positionY / tileSize][enemy.positionX / tileSize] = 2;
         const enemyImage = document.createElement('img');
         enemyImage.src = enemy.image;
         enemyImage.classList.add('enemy');
@@ -261,9 +251,8 @@ function addEnemyToMap(enemy) {
         }
         if(enemy.boss) {
             enemyImage.classList.add('boss');
-        } // Adicionar classe para estilos ou manipulação posterior
+        }
 
-        // Definir posição absoluta com base na posição do inimigo
         const top = enemy.positionY + 'px';
         const left = enemy.positionX + 'px';
 
@@ -271,12 +260,10 @@ function addEnemyToMap(enemy) {
         enemyImage.style.top = top;
         enemyImage.style.left = left;
 
-        // Adicionar a imagem ao container do jogo
         document.getElementById('game-container').appendChild(enemyImage);
     }
 }
 
-// Função para atacar inimigos ao redor do jogador
 function attackNearbyEnemies(playerPositionX, playerPositionY) {
     const playerTileX = Math.floor(playerPositionX / tileSize);
     const playerTileY = Math.floor(playerPositionY / tileSize);
@@ -304,14 +291,9 @@ function attackNearbyEnemies(playerPositionX, playerPositionY) {
 function RemoveEnemyFromGame(){
     for (let i = playerTileY - 1; i <= playerTileY + 1; i++) {
         for (let j = playerTileX - 1; j <= playerTileX + 1; j++) {
-            // Verificar se as coordenadas estão dentro dos limites do mapa
             if (i >= 0 && i < mapa.length && j >= 0 && j < mapa[0].length) {
-                // Verificar se há um inimigo no tile
                 if (mapa[i][j] === 2 || mapa[i][j] === 3) {
                     const isBoss = mapa[i][j] === 3;
-                    // Remover inimigo do mapa
-                    mapa[i][j] = isBoss ? 0 : 1;
-                    // Remover imagem do inimigo do DOM
                     const enemyImage = document.querySelector('.enemy');
                     enemyImage.remove();
                     freeMapTile();
@@ -333,7 +315,6 @@ btnAttack.addEventListener("click", function() {
     const playerPositionX = parseInt(mainCharacter.style.left);
     const playerPositionY = parseInt(mainCharacter.style.top);
 
-    // Chama a função de ataque passando as posições do jogador
     attackNearbyEnemies(playerPositionX, playerPositionY);
 });
 
@@ -399,7 +380,6 @@ function openDoor() {
     let newTop = currentTop / tileSize;
     let newLeft = currentLeft / tileSize;
 
-    // Check if the player is next to a door
     if ((mapa[newTop][newLeft - 1] === 4 || mapa[newTop][newLeft + 1] === 4 || mapa[newTop - 1][newLeft] === 4 || mapa[newTop + 1][newLeft] === 4) && mainPlayer.itens.includes("Chave")) {
         let audio = new Audio('sounds/door.mp3');
         audio.play()
@@ -408,9 +388,7 @@ function openDoor() {
         mapa[newTop+1][newLeft] = 0
         mapa[newTop-1][newLeft] = 0
         alert("Você abriu a porta!");
-        // Remove the door from the map
         mapa[newTop][newLeft] = 0;
-        // Remove the key from the player's inventory
         const keyIndex = mainPlayer.itens.indexOf("Chave");
         if (keyIndex !== -1) {
             mainPlayer.itens.splice(keyIndex, 1);
@@ -427,7 +405,6 @@ let seconds = 0;
 let minutes = 0;
 
 
-// Add this function to start the timer
 function startTimer() {
     timerInterval = setInterval(function() {
         seconds++;
@@ -439,7 +416,6 @@ function startTimer() {
     }, 1000);
 }
 
-// Add this function to update the timer display
 function updateTimerDisplay() {
     const timerElement = document.getElementById('timer');
     const formattedMinutes = minutes < 10 ? '0' + minutes : minutes;
