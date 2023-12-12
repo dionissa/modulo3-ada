@@ -7,24 +7,40 @@ class Character {
         this.itens = ["Chave"]
         this.escudoDeÁgua = false
     }
-    move(direction) {
-        mainCharacter = document.querySelector("#main-character")
-        const upButton = document.querySelector("#up-button")
-        upButton.addEventListener("click", () => {
-            switch (direction){
-                case "up": 
-                            let currentTop = parseInt(mainCharacter.style.top) || 0;
-                            currentTop += 30;
-                            mainCharacter.style.top = currentTop + 'px';
-                    break
-                case "down":
-                    break
-                case "left":
-                    break
-                case "right":
-                    break
-            }
-        })
+    static moveCharacter(direction) {
+        const computedStyle = window.getComputedStyle(mainCharacter);
+        
+        let currentTop = parseInt(computedStyle.top);
+        let currentLeft = parseInt(computedStyle.left);
+    
+        let newTop = currentTop;
+        let newLeft = currentLeft;
+        const rowIndex = Math.floor(newTop / tileSize);
+        const colIndex = Math.floor(newLeft / tileSize);
+    
+        switch (direction) {
+            case 'up':
+                newTop -= tileSize;
+                break;
+            case 'down':
+                newTop += tileSize;
+                break;
+            case 'left':
+                newLeft -= tileSize;
+                break;
+            case 'right':
+                newLeft += tileSize;
+                break;
+            default:
+                break;
+        }
+    
+        if (canMoveTo(newLeft, newTop)) {
+            mainCharacter.style.top = `${newTop}px`;
+            mainCharacter.style.left = `${newLeft}px`;
+            console.log('newTop:', newTop, 'newLeft:', newLeft);
+            console.log("row:", rowIndex, "col:", colIndex)
+        }
     }
     static colectItem(){
         const computedStyle = window.getComputedStyle(mainCharacter);  
@@ -39,7 +55,9 @@ class Character {
             audio2.play()
             alert(`Você encontrou o item Espada Radiante e uma Chave`)
             mainPlayer.espadaRadiante = true
-            mainPlayer.itens.push("Espada Radiante", "Chave")
+            mainPlayer.itens.push(item1.name, item2.name)
+            mainPlayer.score += item1.points
+            mainPlayer.score += item2.points
             audio.play();
             return
         }
@@ -48,7 +66,10 @@ class Character {
             audio2.play()
             alert(`Você encontrou o item Escudo de Água e uma Chave`)
             mainPlayer.escudoDeÁgua = true
-            mainPlayer.itens.push("Escudo de Água", "Chave")
+            mainPlayer.itens.push(item3.name)
+            mainPlayer.itens.push(item2.name)
+            mainPlayer.score += item3.points
+            mainPlayer.score += item2.points
             audio.play();
             audio2.play()
             return
@@ -68,14 +89,15 @@ class Character {
 }
 
 class Enemy {
-    constructor(name, level, reward, positionX, positionY, image) {
+    constructor(name, level, reward, positionX, positionY, image, healthPoints) {
         this.name = name;
         this.level = level;
         this.reward = reward;
         this.positionX = positionX;
         this.positionY = positionY;
         this.image = image;
-        this.defeated = false
+        this.defeated = false;
+        this.healthPoints = healthPoints
     }
 }
 
@@ -103,12 +125,16 @@ class SpecialItem extends Item {
 class GameState {
     static startGame(){
         window.location.href = 'index.html';
+        startTimer();
     }
     static pauseGame(){
         alert("O jogo foi pausado")
     }
     static quitGame(){
         window.location.href = 'start.html';
+    }
+    static showPoints(){
+        alert(`Pontuação atual: ${mainPlayer.score}`)
     }
 }
 
@@ -136,14 +162,19 @@ const tileSize = 32;
 
 // Exemplo de criação de um inimigo e adição ao mapa
 const mainPlayer = new Character("Dio", 0)
-const finalBoss = new BossEnemy("Tarrask", 5, "Ultimate Wish", 224, 96, "img/monster.png");
-const normalEnemy1 = new Enemy("Flameling", 4, "Iron Flail", 160, 256, "img/monster2.png")
-const normalEnemy2 = new Enemy("Imp", 1, "Water Sword", 320, 416, "img/boss.png")
+const finalBoss = new BossEnemy("Tarrask", 5, "Ultimate Wish", 224, 96, "img/dragon.gif");
+const normalEnemy1 = new Enemy("Flameling", 4, "Iron Flail", 160, 256, "img/wizard.gif")
+const normalEnemy2 = new Enemy("Imp", 1, "Water Sword", 320, 416, "img/demon.gif")
+"Espada de Água" , "Chave", "Estrela dos Desejos"
+const item1 = new Item("Espada de Água", 1000)
+const item2 = new Item("Chave", 0)
+const item3 = new Item("Escudo de Água", 3000)
+const item4 = new Item("Estrela dos Desejos", 50000)
+
 addEnemyToMap(normalEnemy2)
 addEnemyToMap(normalEnemy1)
 addEnemyToMap(finalBoss);
 
-// Defina a posição inicial do personagem em pixels
 const initialPositionY = 14 * tileSize;
 const initialPositionX = 0;
 
@@ -163,57 +194,56 @@ function canMoveTo(newLeft, newTop) {
     return mapa[rowIndex][colIndex] === 0
 }
 
-function moveCharacter(direction) {
-    const computedStyle = window.getComputedStyle(mainCharacter);
-    
-    let currentTop = parseInt(computedStyle.top);
-    let currentLeft = parseInt(computedStyle.left);
-
-    let newTop = currentTop;
-    let newLeft = currentLeft;
-
-    switch (direction) {
-        case 'up':
-            newTop -= tileSize;
-            break;
-        case 'down':
-            newTop += tileSize;
-            break;
-        case 'left':
-            newLeft -= tileSize;
-            break;
-        case 'right':
-            newLeft += tileSize;
-            break;
-        default:
-            break;
-    }
-
-    if (canMoveTo(newLeft, newTop)) {
-        mainCharacter.style.top = `${newTop}px`;
-        mainCharacter.style.left = `${newLeft}px`;
-    }
-}
-
 // Adicione um ouvinte de evento de teclado para capturar as setas
 document.addEventListener("keydown", function(event) {
+    if (event.key === 'ArrowUp' || event.key === 'ArrowDown' || event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+        // Prevent the default scrolling behavior
+        event.preventDefault();
+      }
     switch (event.key) {
         case 'ArrowUp':
-            moveCharacter('up');
-            break;
+        case 'w':
+        case 'W':   
+            Character.moveCharacter('up');
+        break;
         case 'ArrowDown':
-            moveCharacter('down');
-            break;
+        case 's':
+        case 'S':
+            Character.moveCharacter('down');
+        break;
         case 'ArrowLeft':
-            moveCharacter('left');
-            break;
+        case 'a':
+        case 'A':
+            Character.moveCharacter('left');
+        break;
         case 'ArrowRight':
-            moveCharacter('right');
-            break;
-        default:
-            break;
+        case 'd':
+        case 'D':
+            Character.moveCharacter('right');
+        break;
+        case 'E':
+        case 'e':
+            const mainCharacter = document.querySelector("#main-character");
+            const playerPositionX = parseInt(mainCharacter.style.left);
+            const playerPositionY = parseInt(mainCharacter.style.top);        
+            attackNearbyEnemies(playerPositionX, playerPositionY)
+        break
+        case 'F':
+        case 'f':
+            Character.colectItem()
+        break
+        case 'B':
+        case 'b':
+            openDoor()
+        break
+        case 'I':
+        case 'i':
+            Character.showItens(mainPlayer)
+        break
+      default:
+        break;
     }
-});
+  });
 
 // Função para adicionar um inimigo ao mapa
 function addEnemyToMap(enemy) {
@@ -226,6 +256,9 @@ function addEnemyToMap(enemy) {
         const enemyImage = document.createElement('img');
         enemyImage.src = enemy.image;
         enemyImage.classList.add('enemy');
+        if (enemy.level === 4) {
+            enemyImage.classList.add('enemy1')
+        }
         if(enemy.boss) {
             enemyImage.classList.add('boss');
         } // Adicionar classe para estilos ou manipulação posterior
@@ -253,15 +286,18 @@ function attackNearbyEnemies(playerPositionX, playerPositionY) {
     if (mainPlayer.itens.length === 2) {    
         audio.play()
         RemoveEnemyFromGame()
+        mainPlayer.score += 1500;
         return
     } if (mainPlayer.itens.length === 3 && normalEnemy2.defeated) {
         RemoveEnemyFromGame()
-        mainPlayer.itens.push("Chave")
+        mainPlayer.itens.push(item2.name)
         audio.play()
+        mainPlayer.score += 3000;
         return
     } if (mainPlayer.itens.length > 3) {
         RemoveEnemyFromGame()
         audio.play()
+        mainPlayer.score += 50000;
         return
     }
 
@@ -291,8 +327,7 @@ function RemoveEnemyFromGame(){
 }
 }
 
-// Event listener para o botão de ataque
-const btnAttack = document.querySelector("#attack-button");
+    const btnAttack = document.querySelector("#attack-button");
 btnAttack.addEventListener("click", function() {
     const mainCharacter = document.querySelector("#main-character");
     const playerPositionX = parseInt(mainCharacter.style.left);
@@ -322,26 +357,20 @@ function freeMapTile(){
         mapa[10][6] = 0
         alert(`Parabéns, você derrotou o ${normalEnemy1.name} e adquiriu uma Chave`)
         normalEnemy1.defeated = true
+        mainPlayer.itens.push(item2.name)
         return
     } if (normalEnemy1.defeated && normalEnemy2.defeated) {
         audio.play()
         alert(`Parabéns, você derrotou o chefe final e finalizou o jogo!`)
         window.location.href = 'start.html';
     }
+    if (normalEnemy1.defeated && normalEnemy2.defeated) {
+        audio.play();
+        alert(`Parabéns, você derrotou o chefe final e finalizou o jogo!`);
+        clearInterval(timerInterval); // Stop the timer
+        window.location.href = 'start.html';
+    }
 }
-
-var audio = new Audio('sounds/music.mp3');
-var playPauseButton = document.getElementById('play-pause');
-
-playPauseButton.addEventListener('click', function() {
-  if (audio.paused) {
-    audio.play();
-    playPauseButton.textContent = '⏸';
-  } else {
-    audio.pause();
-    playPauseButton.textContent = '▶️';
-  }
-});
 
 function showSword() {
     const swordContainer = document.getElementById('sword-container');
@@ -349,7 +378,7 @@ function showSword() {
 
     const mainCharacter = document.getElementById('main-character');
     const top = parseInt(mainCharacter.style.top) - 16  + 'px';
-    const left = (parseInt(mainCharacter.style.left) + 32) + 'px'; // Adjust the left position
+    const left = (parseInt(mainCharacter.style.left) + 32) + 'px';
     swordContainer.style.width = "64px"
     swordContainer.style.height = "64px"
     swordContainer.style.top = top;
@@ -391,3 +420,31 @@ function openDoor() {
         alert("Você não tem a chave ou não está próximo de uma porta.");
     }
 }
+
+
+let timerInterval;
+let seconds = 0;
+let minutes = 0;
+
+
+// Add this function to start the timer
+function startTimer() {
+    timerInterval = setInterval(function() {
+        seconds++;
+        if (seconds === 60) {
+            seconds = 0;
+            minutes++;
+        }
+        updateTimerDisplay();
+    }, 1000);
+}
+
+// Add this function to update the timer display
+function updateTimerDisplay() {
+    const timerElement = document.getElementById('timer');
+    const formattedMinutes = minutes < 10 ? '0' + minutes : minutes;
+    const formattedSeconds = seconds < 10 ? '0' + seconds : seconds;
+    timerElement.innerText = `${formattedMinutes}:${formattedSeconds}`;
+}
+
+startTimer();
